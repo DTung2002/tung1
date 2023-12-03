@@ -16,21 +16,22 @@ app.get('/', (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  // const roomName = `room_${socket.id}`;
-  
+  socket.on('out', (data)=>{
+    socket.leave(data);
+    socket.Phong = data;
+    socket.emit('out room', data);
+  })
   console.log('new connect from ' +socket.id);
   socket.on('chat room', (data)=>{
     socket.join(data);
     socket.Phong = data;
-    // socket.emit('room', data);
+    socket.emit('room', data);
   })
   socket.on('chat message', (msg)=>{
-    socket.emit('chat meessage', 'Chào mừng bạn đến với phòng chat ' +socket.Phong);
-
-    io.sockets.to(socket.Phong).emit('chat message', msg)  
+    io.sockets.to(socket.Phong).emit('chat message', msg)
   });
   socket.on('disconnect', () =>{
-    console.log('user disconnected')
+    console.log('an user disconnected')
   })
 });
 

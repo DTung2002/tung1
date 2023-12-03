@@ -34,7 +34,8 @@
      <form id="form" action="">
       <input type="text" id="txtRoom" />
       <button type="submit" id="myButton" onclick="myFunction()">Join Room</button>
-        <input id="input" autocomplete="off" /><button>Send</button>
+      <button type="submit" id="leaveRoomButton" onclick="leaveRoom()">Leave Room</button>  
+      <input id="input" autocomplete="off" /><button>Send</button>
         <button id="toggle-btn">Disconnect</button>
       </form>
       
@@ -42,7 +43,14 @@
         function myFunction(){
             var inputTxt = document.getElementById('txtRoom').value;
             socket.emit('chat room', inputTxt);
+            document.getElementById('txtRoom').value = ''; // Clear the input value
+
         }
+        function leaveRoom(){
+            socket.emit('out', '');
+            // document.getElementById('txtRoom').value = ''; // Clear the input value
+        }
+
         const toggleButton = document.getElementById('toggle-btn');
       
         toggleButton.addEventListener('click', (e) => {
@@ -55,6 +63,13 @@
             socket.connect();
           }
         });
+        // const MyButton = document.getElementById('myButton');
+        // MyButton.addEventListener('click', (e)=>{
+        //   e.preventDefault();
+        //   if (socket.joined) {
+        //     MyButton.innerText = 'Join Room';
+        //   }
+        // })
       </script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -73,6 +88,20 @@ form.addEventListener('submit', (e) => {
     input.value = '';
   }
 });
+socket.on('room', (data) => { 
+  if (data) {
+    const item = document.createElement('li');
+    item.textContent = 'Chào mừng bạn đến với phòng chat ' +data;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+  });
+socket.on('out room', (data) => { 
+    const item = document.createElement('li');
+    item.textContent = 'Bạn đã rời khỏi phòng ' +data;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
 
 socket.on('chat message', (msg) => { 
     const item = document.createElement('li');
